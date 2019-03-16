@@ -51,7 +51,7 @@ window.onload = function () {
             var circle = new Circle(game);
             circle.radius = objectData.radius;
             circle.colors = objectData.colors;
-
+            circle.color = objectData.color;
             circle.x = objectData.x;
             circle.y = objectData.y;
             circle.velocity = objectData.velocity;
