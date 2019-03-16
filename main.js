@@ -1,6 +1,65 @@
 
 // GameBoard code below
 
+var socket = io.connect("http://24.16.255.56:8888");
+var game = null;
+
+window.onload = function () {
+
+    var saveButton = document.getElementById("save");
+    var loadButton = document.getElementById("load");
+
+    saveButton.onclick = function() {
+        saveData();
+    }
+    function saveData() {
+        console.log("Saving data");
+        
+        var objectsList = [];
+        for (var i = 0; i < game.entities.length; i++) {
+            var entityObj = game.entities[i];
+            objectsList.push({
+                            radius: entityObj.radius,
+                            colors: entityObj.colors,
+                            color: entityObj.color,
+                            x: entityObj.x,
+                            y: entityObj.y,
+                            velocity: entityObj.velocity
+                            });
+        }
+        socket.emit("save", {studentname: "Anh Nguyen", statename: "myState", data: {objects: objectsList}});
+        console.log("Saved data state");
+    }
+
+
+    loadButton.onclick = function() {
+        loadData();
+    }
+        
+    function loadData() {
+        console.log("Loading");
+        socket.emit("load", { studentname: "Anh Nguyen", statename: "myState" });    
+        console.log("Loaded data state");
+    }
+        
+    socket.on("load", function (data) {
+     
+        game.entities = [];
+        for (var i = 0; i < data.data.objects.length; i++) {
+            var objectData = data.data.objects[i];
+            
+            var circle = new Circle(game);
+            circle.radius = objectData.radius;
+            circle.colors = objectData.colors;
+
+            circle.x = objectData.x;
+            circle.y = objectData.y;
+            circle.velocity = objectData.velocity;
+            game.addEntity(circle);            
+        }
+    });
+
+};
 var minRadius = 20;
 var maxRadius = 50;
 var minColor = 0;
@@ -14,7 +73,7 @@ function distance(a, b) {
 }
 
 function Circle(game) {
-    this.player = 1;
+    // this.player = 1;
     this.radius = 20;
     this.visualRadius = 500;
     this.colors = ["Red", "Green", "Blue", "White", "Yellow", "Purple", "Cyan"];
@@ -247,22 +306,22 @@ ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
     var canvas = document.getElementById('gameWorld');
     var ctx = canvas.getContext('2d');
-
-
-    var gameEngine = new GameEngine();
-    var circle = new Circle(gameEngine);
+    var GAMEEngine = new GameEngine();
+    
+    var circle = new Circle(GAMEEngine);
+    game = GAMEEngine;
     circle.setIt();
-    gameEngine.addEntity(circle);
+    GAMEEngine.addEntity(circle);
     for (var i = 0; i < 100; i++) {
-        circle = new Circle(gameEngine);
+        circle = new Circle(GAMEEngine);
         if (i % 25 == 0) {
             circle.setIt();
         }
         circle.setRandomRadius();
         circle.setRandomColor();
-        gameEngine.addEntity(circle);
+        GAMEEngine.addEntity(circle);
     }
 
-    gameEngine.init(ctx);
-    gameEngine.start();
+    GAMEEngine.init(ctx);
+    GAMEEngine.start();
 });
