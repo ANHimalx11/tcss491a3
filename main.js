@@ -43,7 +43,7 @@ window.onload = function () {
     }
         
     socket.on("load", function (data) {
-     
+     console.log(data.data);
         game.entities = [];
         for (var i = 0; i < data.data.objects.length; i++) {
             var objectData = data.data.objects[i];
@@ -57,6 +57,7 @@ window.onload = function () {
             circle.velocity = objectData.velocity;
             game.addEntity(circle);            
         }
+        GAMEEngine.loop();
     });
 
 };
@@ -73,11 +74,11 @@ function distance(a, b) {
 }
 
 function Circle(game) {
-    // this.player = 1;
     this.radius = 20;
     this.visualRadius = 500;
     this.colors = ["Red", "Green", "Blue", "White", "Yellow", "Purple", "Cyan"];
     this.mutateBank = [];
+    this.color;
     this.setNotIt();
     Entity.call(this, game, this.radius + Math.random() * (800 - this.radius * 2), this.radius + Math.random() * (800 - this.radius * 2));
 
@@ -123,6 +124,7 @@ Circle.prototype.eat = function (other) {
             this.radius = maxRadius;
         }
     }
+    this.color = other.color;
     this.mutateColor(other);
 }
 
