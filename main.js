@@ -57,7 +57,7 @@ window.onload = function () {
             circle.velocity = objectData.velocity;
             game.addEntity(circle);            
         }
-        GAMEEngine.loop();
+        game.loop();
     });
 
 };
